@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - Signature Security Specialist</title>
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Signature Security</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active">
+                        <a href="#overview" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Overview</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#guards" class="nav-link">
+                            <i class="fas fa-user-shield"></i>
+                            <span>My Guards</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#schedules" class="nav-link">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Schedules</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#reports" class="nav-link">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#incidents" class="nav-link">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Incidents</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#billing" class="nav-link">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Billing</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#settings" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name">John Smith</span>
+                        <span class="user-role">Client</span>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1>Client Dashboard</h1>
+                    <p>Welcome back, John Smith</p>
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <button class="notification-btn">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="action-btn primary">
+                            <i class="fas fa-plus"></i>
+                            Request Guard
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Overview Section -->
+                <section id="overview" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Active Guards</h3>
+                                <p class="stat-number">8</p>
+                                <span class="stat-change positive">+2 this week</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Hours This Month</h3>
+                                <p class="stat-number">1,247</p>
+                                <span class="stat-change positive">+15% from last month</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Security Score</h3>
+                                <p class="stat-number">98%</p>
+                                <span class="stat-change positive">Excellent</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Monthly Cost</h3>
+                                <p class="stat-number">$12,450</p>
+                                <span class="stat-change neutral">On budget</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-grid">
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Recent Activity</h3>
+                                <button class="view-all-btn">View All</button>
+                            </div>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>New guard assigned to Building A</p>
+                                        <span class="activity-time">2 hours ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>Security check completed at Main Entrance</p>
+                                        <span class="activity-time">4 hours ago</span>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <i class="fas fa-file-alt"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <p>Monthly report generated</p>
+                                        <span class="activity-time">1 day ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="card-header">
+                                <h3>Guard Locations</h3>
+                                <button class="view-all-btn">View Map</button>
+                            </div>
+                            <div class="location-list">
+                                <div class="location-item">
+                                    <div class="location-status online"></div>
+                                    <div class="location-info">
+                                        <h4>Main Entrance</h4>
+                                        <p>Guard: Mike Johnson</p>
+                                    </div>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-status online"></div>
+                                    <div class="location-info">
+                                        <h4>Building A - Floor 3</h4>
+                                        <p>Guard: Sarah Wilson</p>
+                                    </div>
+                                </div>
+                                <div class="location-item">
+                                    <div class="location-status offline"></div>
+                                    <div class="location-info">
+                                        <h4>Parking Garage</h4>
+                                        <p>Guard: David Brown</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Guards Section -->
+                <section id="guards" class="content-section">
+                    <div class="section-header">
+                        <h2>My Security Guards</h2>
+                        <button class="btn primary">
+                            <i class="fas fa-plus"></i>
+                            Add New Guard
+                        </button>
+                    </div>
+                    
+                    <div class="guards-grid">
+                        <div class="guard-card">
+                            <div class="guard-avatar">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="guard-info">
+                                <h3>Mike Johnson</h3>
+                                <p>Senior Security Officer</p>
+                                <div class="guard-status online">On Duty</div>
+                            </div>
+                            <div class="guard-actions">
+                                <button class="btn secondary">View Details</button>
+                                <button class="btn primary">Contact</button>
+                            </div>
+                        </div>
+                        
+                        <div class="guard-card">
+                            <div class="guard-avatar">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="guard-info">
+                                <h3>Sarah Wilson</h3>
+                                <p>Security Specialist</p>
+                                <div class="guard-status online">On Duty</div>
+                            </div>
+                            <div class="guard-actions">
+                                <button class="btn secondary">View Details</button>
+                                <button class="btn primary">Contact</button>
+                            </div>
+                        </div>
+                        
+                        <div class="guard-card">
+                            <div class="guard-avatar">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="guard-info">
+                                <h3>David Brown</h3>
+                                <p>Security Officer</p>
+                                <div class="guard-status offline">Off Duty</div>
+                            </div>
+                            <div class="guard-actions">
+                                <button class="btn secondary">View Details</button>
+                                <button class="btn primary">Contact</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Other sections would be similar... -->
+                <section id="schedules" class="content-section">
+                    <div class="section-header">
+                        <h2>Security Schedules</h2>
+                        <button class="btn primary">
+                            <i class="fas fa-plus"></i>
+                            Create Schedule
+                        </button>
+                    </div>
+                    <div class="placeholder-content">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Schedule Management</h3>
+                        <p>Manage your security guard schedules and shifts here.</p>
+                    </div>
+                </section>
+
+                <section id="reports" class="content-section">
+                    <div class="section-header">
+                        <h2>Security Reports</h2>
+                        <button class="btn primary">
+                            <i class="fas fa-download"></i>
+                            Generate Report
+                        </button>
+                    </div>
+                    <div class="placeholder-content">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Report Center</h3>
+                        <p>View and generate security reports and analytics.</p>
+                    </div>
+                </section>
+
+                <section id="incidents" class="content-section">
+                    <div class="section-header">
+                        <h2>Incident Reports</h2>
+                        <button class="btn primary">
+                            <i class="fas fa-plus"></i>
+                            Report Incident
+                        </button>
+                    </div>
+                    <div class="placeholder-content">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Incident Management</h3>
+                        <p>Track and manage security incidents and reports.</p>
+                    </div>
+                </section>
+
+                <section id="billing" class="content-section">
+                    <div class="section-header">
+                        <h2>Billing & Payments</h2>
+                        <button class="btn primary">
+                            <i class="fas fa-credit-card"></i>
+                            Make Payment
+                        </button>
+                    </div>
+                    <div class="placeholder-content">
+                        <i class="fas fa-dollar-sign"></i>
+                        <h3>Billing Center</h3>
+                        <p>Manage your billing, payments, and invoices.</p>
+                    </div>
+                </section>
+
+                <section id="settings" class="content-section">
+                    <div class="section-header">
+                        <h2>Account Settings</h2>
+                    </div>
+                    <div class="placeholder-content">
+                        <i class="fas fa-cog"></i>
+                        <h3>Settings</h3>
+                        <p>Manage your account settings and preferences.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="dashboard-script.js"></script>
+</body>
+</html>
