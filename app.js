@@ -264,6 +264,12 @@ class FieldOfficerApp {
             return;
         }
 
+        // Check if mission report has been completed
+        if (this.currentMission.report) {
+            this.showNotification('Cannot go on site after mission report is completed!', 'error');
+            return;
+        }
+
         const modal = document.getElementById('logsModal');
         const modalContent = modal.querySelector('.modal-content');
         
@@ -574,8 +580,20 @@ class FieldOfficerApp {
             completedAt: new Date()
         };
 
+        // Disable on-site button after mission report is completed (for patrol missions)
+        if (this.currentMission.type === 'patrol') {
+            const onSiteBtn = document.getElementById('onSiteBtn');
+            if (onSiteBtn) {
+                onSiteBtn.disabled = true;
+            }
+            // If currently on site, force them to leave
+            if (this.isOnSite) {
+                this.showNotification('Mission report completed. Please leave site to end mission.', 'error');
+            }
+        }
+
         this.closeModal();
-        this.showNotification('Mission report saved successfully!');
+        this.showNotification('Mission report saved successfully! Cannot visit new sites after report completion.');
     }
 
     endMission() {
