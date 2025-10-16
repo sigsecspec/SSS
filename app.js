@@ -21,6 +21,79 @@ class FieldOfficerApp {
         }
         this.startAutoSave();
         this.addBeforeUnloadListener();
+        this.addPoliceTerminalFeatures();
+    }
+    
+    addPoliceTerminalFeatures() {
+        // Add timestamp for desktop toughbook style
+        if (window.innerWidth >= 1024) {
+            this.addTimestamp();
+            this.addSystemStatus();
+            setInterval(() => this.updateTimestamp(), 1000);
+        }
+    }
+    
+    addSystemStatus() {
+        const status = document.createElement('div');
+        status.id = 'systemStatus';
+        status.style.cssText = `
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: var(--desktop-bg-primary);
+            color: var(--desktop-success);
+            padding: 5px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid var(--desktop-border);
+            border-radius: 2px;
+            z-index: 1000;
+            letter-spacing: 1px;
+        `;
+        status.innerHTML = '● SYSTEM ONLINE | DB CONNECTED';
+        document.body.appendChild(status);
+    }
+    
+    addTimestamp() {
+        const timestamp = document.createElement('div');
+        timestamp.id = 'policeTimestamp';
+        timestamp.style.cssText = `
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--desktop-bg-primary);
+            color: var(--desktop-success);
+            padding: 5px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid var(--desktop-border);
+            border-radius: 2px;
+            z-index: 1000;
+            letter-spacing: 1px;
+        `;
+        document.body.appendChild(timestamp);
+        this.updateTimestamp();
+    }
+    
+    updateTimestamp() {
+        const timestamp = document.getElementById('policeTimestamp');
+        if (timestamp) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            const dateStr = now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            timestamp.textContent = `${dateStr} ${timeStr} UTC`;
+        }
     }
 
     bindEvents() {
@@ -49,22 +122,22 @@ class FieldOfficerApp {
         const mainContent = document.getElementById('mainContent');
         mainContent.innerHTML = `
             <div class="mission-selection">
-                <h2>Select Mission Type</h2>
+                <h2>Select Operation Type</h2>
                 <div class="mission-cards">
                     <div class="mission-card" data-mission="standing">
                         <div class="mission-icon">🛡️</div>
-                        <h3>Standing</h3>
-                        <p>Fixed position security duty</p>
+                        <h3>Fixed Post</h3>
+                        <p>Stationary patrol assignment</p>
                     </div>
                     <div class="mission-card" data-mission="patrol">
-                        <div class="mission-icon">🚶</div>
-                        <h3>Patrol</h3>
-                        <p>Mobile security patrol with multiple stops</p>
+                        <div class="mission-icon">🚔</div>
+                        <h3>Mobile Patrol</h3>
+                        <p>Vehicle patrol with checkpoint stops</p>
                     </div>
                     <div class="mission-card" data-mission="desk">
-                        <div class="mission-icon">💻</div>
-                        <h3>Desk</h3>
-                        <p>Administrative and monitoring duties</p>
+                        <div class="mission-icon">📋</div>
+                        <h3>Desk Duty</h3>
+                        <p>Station administrative operations</p>
                     </div>
                 </div>
             </div>
@@ -97,7 +170,7 @@ class FieldOfficerApp {
             <div class="dashboard">
                 <div class="dashboard-header">
                     <div class="mission-info">
-                        <h2>Patrol Mission</h2>
+                        <h2>Mobile Patrol Operation</h2>
                         <div class="mission-status status-inactive" id="missionStatus">Inactive</div>
                     </div>
                     <button class="nav-btn" onclick="app.loadMainPage()">← Back to Home</button>
@@ -105,13 +178,13 @@ class FieldOfficerApp {
 
                 <div class="dashboard-controls">
                     <button class="control-btn btn-primary" id="startMissionBtn" onclick="app.showStartMissionModal()">
-                        Start Mission
+                        Begin Operation
                     </button>
                     <button class="control-btn btn-success" id="onSiteBtn" onclick="app.goOnSite()" disabled>
-                        Go On Site
+                        Arrive On Scene
                     </button>
                     <button class="control-btn btn-warning" id="offSiteBtn" onclick="app.goOffSite()" disabled>
-                        Leave Site
+                        Clear Scene
                     </button>
                     <button class="control-btn btn-primary" onclick="app.showIncidentModal()">
                         Incident Report
@@ -148,7 +221,7 @@ class FieldOfficerApp {
             <div class="dashboard">
                 <div class="dashboard-header">
                     <div class="mission-info">
-                        <h2>${typeTitle} Mission</h2>
+                        <h2>${typeTitle} Operation</h2>
                         <div class="mission-status status-inactive" id="missionStatus">Inactive</div>
                     </div>
                     <button class="nav-btn" onclick="app.loadMainPage()">← Back to Home</button>

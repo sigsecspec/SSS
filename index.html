@@ -3,47 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Field Officer Mission Log</title>
+    <title>Police Database System</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Field Officer Mission Log</h1>
+            <h1>Police Database System</h1>
             <div class="nav-buttons">
-                <button id="viewLogsBtn" class="nav-btn">View Mission Logs</button>
+                <button id="viewLogsBtn" class="nav-btn">Database Records</button>
             </div>
         </header>
 
         <main id="mainContent">
             <div class="mission-selection">
-                <h2>Select Mission Type</h2>
+                <h2>Select Operation Type</h2>
                 <div class="mission-cards">
                     <div class="mission-card" data-mission="standing">
                         <div class="mission-icon">🛡️</div>
-                        <h3>Standing</h3>
-                        <p>Fixed position security duty</p>
+                        <h3>Fixed Post</h3>
+                        <p>Stationary patrol assignment</p>
                     </div>
                     <div class="mission-card" data-mission="patrol">
-                        <div class="mission-icon">🚶</div>
-                        <h3>Patrol</h3>
-                        <p>Mobile security patrol with multiple stops</p>
+                        <div class="mission-icon">🚔</div>
+                        <h3>Mobile Patrol</h3>
+                        <p>Vehicle patrol with checkpoint stops</p>
                     </div>
                     <div class="mission-card" data-mission="desk">
-                        <div class="mission-icon">💻</div>
-                        <h3>Desk</h3>
-                        <p>Administrative and monitoring duties</p>
+                        <div class="mission-icon">📋</div>
+                        <h3>Desk Duty</h3>
+                        <p>Station administrative operations</p>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Mission Logs Modal -->
+    <!-- Database Records Modal -->
     <div id="logsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Mission Logs</h2>
+                <h2>Database Records</h2>
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
