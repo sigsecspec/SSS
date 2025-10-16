@@ -189,7 +189,7 @@ class FieldOfficerApp {
                     <button class="control-btn btn-primary" onclick="app.showIncidentModal()">
                         Incident Report
                     </button>
-                    <button class="control-btn btn-primary" onclick="app.showCheckpointModal()">
+                    <button class="control-btn btn-success" id="addCheckpointBtn" onclick="app.showCheckpointModal()" disabled>
                         Add Checkpoint
                     </button>
                     <button class="control-btn btn-warning" onclick="app.showMissionReportModal()" id="missionReportBtn" disabled>
@@ -330,10 +330,11 @@ class FieldOfficerApp {
         document.getElementById('missionStatus').className = 'mission-status status-active';
         document.getElementById('startMissionBtn').disabled = true;
         document.getElementById('missionReportBtn').disabled = false;
-        document.getElementById('endMissionBtn').disabled = false;
+        document.getElementById('endMissionBtn').disabled = true;
         
         if (this.currentMission.type === 'patrol') {
             document.getElementById('onSiteBtn').disabled = false;
+            document.getElementById('addCheckpointBtn').disabled = true;
         }
         
         this.closeModal();
@@ -416,6 +417,7 @@ class FieldOfficerApp {
         document.getElementById('missionStatus').className = 'mission-status status-onsite';
         document.getElementById('onSiteBtn').disabled = true;
         document.getElementById('offSiteBtn').disabled = false;
+        document.getElementById('addCheckpointBtn').disabled = false;
         
         this.closeModal();
         this.showNotification('Now on site at ' + formData.get('siteLocation'));
@@ -442,6 +444,7 @@ class FieldOfficerApp {
         document.getElementById('missionStatus').className = 'mission-status status-active';
         document.getElementById('onSiteBtn').disabled = false;
         document.getElementById('offSiteBtn').disabled = true;
+        document.getElementById('addCheckpointBtn').disabled = true;
         
         this.updatePatrolStopsList();
         this.showNotification('Left site - now in transit');
@@ -666,6 +669,9 @@ class FieldOfficerApp {
             completedAt: new Date()
         };
         this.saveCurrentMission();
+        
+        // Enable end mission button now that report is completed
+        document.getElementById('endMissionBtn').disabled = false;
 
         // Disable on-site button after mission report is completed (for patrol missions)
         if (this.currentMission.type === 'patrol') {
@@ -790,6 +796,9 @@ class FieldOfficerApp {
         // Clear current mission from storage
         this.clearCurrentMission();
         
+        // Clear all details and disable all buttons except begin
+        this.clearMissionUI();
+        
         this.closeModal();
         this.showNotification('Mission completed successfully!');
         
@@ -797,6 +806,57 @@ class FieldOfficerApp {
         setTimeout(() => {
             this.showMissionSummary();
         }, 1000);
+    }
+
+    clearMissionUI() {
+        // Clear patrol stops and incidents lists
+        const patrolStopsList = document.getElementById('patrolStopsList');
+        if (patrolStopsList) {
+            patrolStopsList.innerHTML = '<p>No patrol stops recorded yet.</p>';
+        }
+        
+        const incidentsList = document.getElementById('incidentsList');
+        if (incidentsList) {
+            incidentsList.innerHTML = '<p>No incidents recorded yet.</p>';
+        }
+        
+        // Reset mission status
+        const missionStatus = document.getElementById('missionStatus');
+        if (missionStatus) {
+            missionStatus.textContent = 'Inactive';
+            missionStatus.className = 'mission-status status-inactive';
+        }
+        
+        // Disable all buttons except begin
+        const startMissionBtn = document.getElementById('startMissionBtn');
+        if (startMissionBtn) {
+            startMissionBtn.disabled = false;
+        }
+        
+        const onSiteBtn = document.getElementById('onSiteBtn');
+        if (onSiteBtn) {
+            onSiteBtn.disabled = true;
+        }
+        
+        const offSiteBtn = document.getElementById('offSiteBtn');
+        if (offSiteBtn) {
+            offSiteBtn.disabled = true;
+        }
+        
+        const addCheckpointBtn = document.getElementById('addCheckpointBtn');
+        if (addCheckpointBtn) {
+            addCheckpointBtn.disabled = true;
+        }
+        
+        const missionReportBtn = document.getElementById('missionReportBtn');
+        if (missionReportBtn) {
+            missionReportBtn.disabled = true;
+        }
+        
+        const endMissionBtn = document.getElementById('endMissionBtn');
+        if (endMissionBtn) {
+            endMissionBtn.disabled = true;
+        }
     }
 
     showMissionSummary() {
@@ -1245,11 +1305,12 @@ Report Generated: ${this.formatDateTime(new Date())}`;
                     document.getElementById('missionStatus').className = this.isOnSite ? 'mission-status status-onsite' : 'mission-status status-active';
                     document.getElementById('startMissionBtn').disabled = true;
                     document.getElementById('missionReportBtn').disabled = false;
-                    document.getElementById('endMissionBtn').disabled = false;
+                    document.getElementById('endMissionBtn').disabled = !this.currentMission.report;
                     
                     if (this.currentMission.type === 'patrol') {
                         document.getElementById('onSiteBtn').disabled = this.isOnSite || !!this.currentMission.report;
                         document.getElementById('offSiteBtn').disabled = !this.isOnSite;
+                        document.getElementById('addCheckpointBtn').disabled = !this.isOnSite;
                     }
                 }
                 
