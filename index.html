@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Field Officer Mission Log</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Field Officer Mission Log</h1>
+            <div class="nav-buttons">
+                <button id="viewLogsBtn" class="nav-btn">View Mission Logs</button>
+            </div>
+        </header>
+
+        <main id="mainContent">
+            <div class="mission-selection">
+                <h2>Select Mission Type</h2>
+                <div class="mission-cards">
+                    <div class="mission-card" data-mission="standing">
+                        <div class="mission-icon">🛡️</div>
+                        <h3>Standing</h3>
+                        <p>Fixed position security duty</p>
+                    </div>
+                    <div class="mission-card" data-mission="patrol">
+                        <div class="mission-icon">🚶</div>
+                        <h3>Patrol</h3>
+                        <p>Mobile security patrol with multiple stops</p>
+                    </div>
+                    <div class="mission-card" data-mission="desk">
+                        <div class="mission-icon">💻</div>
+                        <h3>Desk</h3>
+                        <p>Administrative and monitoring duties</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mission Logs Modal -->
+    <div id="logsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Mission Logs</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="logsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
