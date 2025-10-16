@@ -7,13 +7,17 @@ class FieldOfficerApp {
         this.missionStartTime = null;
         this.isOnSite = false;
         this.currentSiteStartTime = null;
+        this.currentPatrolStop = null;
         
         this.init();
     }
 
     init() {
         this.bindEvents();
-        this.loadMainPage();
+        this.restoreCurrentMission();
+        if (!this.currentMission) {
+            this.loadMainPage();
+        }
     }
 
     bindEvents() {
@@ -75,6 +79,7 @@ class FieldOfficerApp {
             incidents: [],
             checkpoints: []
         };
+        this.saveCurrentMission();
 
         if (type === 'patrol') {
             this.showPatrolDashboard();
@@ -242,6 +247,7 @@ class FieldOfficerApp {
         };
         
         this.missionStartTime = this.currentMission.startTime;
+        this.saveCurrentMission();
         
         // Update UI
         document.getElementById('missionStatus').textContent = 'Active';
@@ -327,6 +333,7 @@ class FieldOfficerApp {
             incidents: [],
             checkpoints: []
         };
+        this.saveCurrentMission();
         
         // Update UI
         document.getElementById('missionStatus').textContent = 'On Site';
@@ -352,6 +359,7 @@ class FieldOfficerApp {
         
         this.isOnSite = false;
         this.currentPatrolStop = null;
+        this.saveCurrentMission();
         
         // Update UI
         document.getElementById('missionStatus').textContent = 'Active (In Transit)';
@@ -442,6 +450,7 @@ class FieldOfficerApp {
         } else {
             this.currentMission.incidents.push(incident);
         }
+        this.saveCurrentMission();
 
         this.updateIncidentsList();
         this.closeModal();
@@ -520,6 +529,7 @@ class FieldOfficerApp {
         } else {
             this.currentMission.checkpoints.push(checkpoint);
         }
+        this.saveCurrentMission();
 
         this.closeModal();
         this.showNotification('Checkpoint added successfully!');
@@ -579,6 +589,7 @@ class FieldOfficerApp {
             recommendations: formData.get('reportRecommendations') || '',
             completedAt: new Date()
         };
+        this.saveCurrentMission();
 
         // Disable on-site button after mission report is completed (for patrol missions)
         if (this.currentMission.type === 'patrol') {
@@ -676,6 +687,7 @@ class FieldOfficerApp {
             hasReplacement: formData.get('hasReplacement') === 'yes',
             replacementInfo: formData.get('replacementInfo') || ''
         };
+        this.saveCurrentMission();
 
         this.completeMission();
     }
@@ -698,6 +710,9 @@ class FieldOfficerApp {
         // Save to mission logs
         this.missionLogs.push({ ...this.currentMission });
         this.saveMissionLogs();
+        
+        // Clear current mission from storage
+        this.clearCurrentMission();
         
         this.closeModal();
         this.showNotification('Mission completed successfully!');
@@ -1052,6 +1067,123 @@ Report Generated: ${this.formatDateTime(new Date())}`;
 
     saveMissionLogs() {
         localStorage.setItem('fieldOfficerMissionLogs', JSON.stringify(this.missionLogs));
+    }
+
+    saveCurrentMission() {
+        if (this.currentMission) {
+            const missionState = {
+                currentMission: this.currentMission,
+                isOnSite: this.isOnSite,
+                currentSiteStartTime: this.currentSiteStartTime,
+                currentPatrolStop: this.currentPatrolStop,
+                missionStartTime: this.missionStartTime
+            };
+            localStorage.setItem('fieldOfficerCurrentMission', JSON.stringify(missionState));
+            this.showAutoSaveIndicator();
+        }
+    }
+
+    restoreCurrentMission() {
+        const saved = localStorage.getItem('fieldOfficerCurrentMission');
+        if (saved) {
+            try {
+                const state = JSON.parse(saved);
+                this.currentMission = state.currentMission;
+                this.isOnSite = state.isOnSite;
+                this.currentSiteStartTime = state.currentSiteStartTime ? new Date(state.currentSiteStartTime) : null;
+                this.currentPatrolStop = state.currentPatrolStop;
+                this.missionStartTime = state.missionStartTime ? new Date(state.missionStartTime) : null;
+                
+                // Convert date strings back to Date objects
+                if (this.currentMission.startTime) {
+                    this.currentMission.startTime = new Date(this.currentMission.startTime);
+                }
+                if (this.currentMission.endTime) {
+                    this.currentMission.endTime = new Date(this.currentMission.endTime);
+                }
+                
+                // Restore the appropriate dashboard
+                if (this.currentMission.type === 'patrol') {
+                    this.showPatrolDashboard();
+                    this.updatePatrolStopsList();
+                } else {
+                    this.showGenericDashboard(this.currentMission.type);
+                }
+                this.updateIncidentsList();
+                
+                // Restore UI state
+                if (this.currentMission.status === 'active') {
+                    document.getElementById('missionStatus').textContent = this.isOnSite ? 'On Site' : 'Active';
+                    document.getElementById('missionStatus').className = this.isOnSite ? 'mission-status status-onsite' : 'mission-status status-active';
+                    document.getElementById('startMissionBtn').disabled = true;
+                    document.getElementById('missionReportBtn').disabled = false;
+                    document.getElementById('endMissionBtn').disabled = false;
+                    
+                    if (this.currentMission.type === 'patrol') {
+                        document.getElementById('onSiteBtn').disabled = this.isOnSite || !!this.currentMission.report;
+                        document.getElementById('offSiteBtn').disabled = !this.isOnSite;
+                    }
+                }
+                
+                this.showNotification('Restored incomplete mission', 'success');
+            } catch (e) {
+                console.error('Error restoring mission:', e);
+                localStorage.removeItem('fieldOfficerCurrentMission');
+            }
+        }
+    }
+
+    clearCurrentMission() {
+        localStorage.removeItem('fieldOfficerCurrentMission');
+        this.currentMission = null;
+        this.isOnSite = false;
+        this.currentSiteStartTime = null;
+        this.currentPatrolStop = null;
+        this.missionStartTime = null;
+    }
+
+    showAutoSaveIndicator() {
+        // Remove any existing indicator
+        const existing = document.querySelector('.autosave-indicator');
+        if (existing) {
+            existing.remove();
+        }
+        
+        // Create new indicator
+        const indicator = document.createElement('div');
+        indicator.className = 'autosave-indicator';
+        indicator.textContent = '✓ Saved';
+        indicator.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        `;
+        
+        document.body.appendChild(indicator);
+        
+        // Fade in
+        setTimeout(() => {
+            indicator.style.opacity = '1';
+        }, 10);
+        
+        // Fade out and remove
+        setTimeout(() => {
+            indicator.style.opacity = '0';
+            setTimeout(() => {
+                if (indicator.parentNode) {
+                    indicator.parentNode.removeChild(indicator);
+                }
+            }, 300);
+        }, 1500);
     }
 }
 
