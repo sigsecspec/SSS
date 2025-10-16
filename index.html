@@ -3,125 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signature Security Specialist - Login</title>
+    <title>Field Officer Mission Logger</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <div class="login-container">
-            <div class="header">
-                <div class="logo">
-                    <i class="fas fa-shield-alt"></i>
-                    <h1>Signature Security Specialist</h1>
-                </div>
-                <p class="tagline">Professional Security Solutions</p>
-            </div>
+        <header>
+            <h1>Field Officer Mission Logger</h1>
+            <p class="subtitle">Select your mission type to begin</p>
+        </header>
 
-            <div class="login-form-container">
-                <div class="form-tabs">
-                    <button class="tab-btn active" data-tab="client">Client Login</button>
-                    <button class="tab-btn" data-tab="guard">Guard Login</button>
+        <main class="mission-selection">
+            <div class="mission-cards">
+                <div class="mission-card" onclick="selectMission('patrol')">
+                    <div class="mission-icon">🚶‍♂️</div>
+                    <h3>Patrol Mission</h3>
+                    <p>Mobile security patrol with multiple stops and locations</p>
                 </div>
 
-                <!-- Client Login Form -->
-                <form class="login-form active" id="clientForm">
-                    <div class="form-group">
-                        <label for="clientEmail">Email Address</label>
-                        <div class="input-group">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" id="clientEmail" name="email" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="clientPassword">Password</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="clientPassword" name="password" required>
-                            <button type="button" class="toggle-password" onclick="togglePassword('clientPassword')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-options">
-                        <label class="checkbox-container">
-                            <input type="checkbox" id="clientRemember">
-                            <span class="checkmark"></span>
-                            Remember me
-                        </label>
-                        <a href="#" class="forgot-password">Forgot Password?</a>
-                    </div>
-                    <button type="submit" class="login-btn">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Client Login
-                    </button>
-                </form>
-
-                <!-- Guard Login Form -->
-                <form class="login-form" id="guardForm">
-                    <div class="form-group">
-                        <label for="guardId">Guard ID</label>
-                        <div class="input-group">
-                            <i class="fas fa-id-badge"></i>
-                            <input type="text" id="guardId" name="guardId" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="guardPassword">Password</label>
-                        <div class="input-group">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="guardPassword" name="password" required>
-                            <button type="button" class="toggle-password" onclick="togglePassword('guardPassword')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-options">
-                        <label class="checkbox-container">
-                            <input type="checkbox" id="guardRemember">
-                            <span class="checkmark"></span>
-                            Remember me
-                        </label>
-                        <a href="#" class="forgot-password">Forgot Password?</a>
-                    </div>
-                    <button type="submit" class="login-btn">
-                        <i class="fas fa-shield-alt"></i>
-                        Guard Login
-                    </button>
-                </form>
-
-                <div class="divider">
-                    <span>or</span>
+                <div class="mission-card" onclick="selectMission('standing')">
+                    <div class="mission-icon">🛡️</div>
+                    <h3>Standing Mission</h3>
+                    <p>Fixed position security duty at a specific location</p>
                 </div>
 
-                <div class="quick-access">
-                    <h3>Quick Access</h3>
-                    <div class="quick-buttons">
-                        <button class="quick-btn" onclick="quickLogin('client')">
-                            <i class="fas fa-user-tie"></i>
-                            Client Demo
-                        </button>
-                        <button class="quick-btn" onclick="quickLogin('guard')">
-                            <i class="fas fa-user-shield"></i>
-                            Guard Demo
-                        </button>
-                    </div>
+                <div class="mission-card" onclick="selectMission('desk')">
+                    <div class="mission-icon">🖥️</div>
+                    <h3>Desk Mission</h3>
+                    <p>Administrative or monitoring duties from a desk position</p>
                 </div>
             </div>
 
-            <div class="footer">
-                <p>&copy; 2024 Signature Security Specialist. All rights reserved.</p>
-                <div class="footer-links">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Support</a>
-                </div>
+            <div class="navigation-section">
+                <button class="secondary-btn" onclick="viewMissionLogs()">
+                    📋 View Mission Logs
+                </button>
             </div>
-        </div>
-
-        <div class="background-pattern"></div>
+        </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
