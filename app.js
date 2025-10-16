@@ -8,6 +8,7 @@ class FieldOfficerApp {
         this.isOnSite = false;
         this.currentSiteStartTime = null;
         this.currentPatrolStop = null;
+        this.autoSaveInterval = null;
         
         this.init();
     }
@@ -18,6 +19,8 @@ class FieldOfficerApp {
         if (!this.currentMission) {
             this.loadMainPage();
         }
+        this.startAutoSave();
+        this.addBeforeUnloadListener();
     }
 
     bindEvents() {
@@ -1061,12 +1064,36 @@ Report Generated: ${this.formatDateTime(new Date())}`;
     }
 
     loadMissionLogs() {
-        const saved = localStorage.getItem('fieldOfficerMissionLogs');
-        return saved ? JSON.parse(saved) : [];
+        try {
+            const saved = localStorage.getItem('fieldOfficerMissionLogs');
+            return saved ? JSON.parse(saved) : [];
+        } catch (e) {
+            console.error('Error loading mission logs:', e);
+            this.showNotification('Error loading mission logs', 'error');
+            return [];
+        }
     }
 
     saveMissionLogs() {
-        localStorage.setItem('fieldOfficerMissionLogs', JSON.stringify(this.missionLogs));
+        try {
+            localStorage.setItem('fieldOfficerMissionLogs', JSON.stringify(this.missionLogs));
+            return true;
+        } catch (e) {
+            console.error('Error saving mission logs:', e);
+            if (e.name === 'QuotaExceededError') {
+                this.showNotification('Storage full! Please clear old mission logs.', 'error');
+                // Try to save to sessionStorage as emergency backup
+                try {
+                    sessionStorage.setItem('fieldOfficerMissionLogs_backup', JSON.stringify(this.missionLogs));
+                    this.showNotification('Emergency backup created in session storage', 'error');
+                } catch (e2) {
+                    console.error('Emergency backup failed:', e2);
+                }
+            } else {
+                this.showNotification('Error saving mission logs', 'error');
+            }
+            return false;
+        }
     }
 
     saveCurrentMission() {
@@ -1076,15 +1103,43 @@ Report Generated: ${this.formatDateTime(new Date())}`;
                 isOnSite: this.isOnSite,
                 currentSiteStartTime: this.currentSiteStartTime,
                 currentPatrolStop: this.currentPatrolStop,
-                missionStartTime: this.missionStartTime
+                missionStartTime: this.missionStartTime,
+                savedAt: new Date().toISOString()
             };
-            localStorage.setItem('fieldOfficerCurrentMission', JSON.stringify(missionState));
-            this.showAutoSaveIndicator();
+            try {
+                localStorage.setItem('fieldOfficerCurrentMission', JSON.stringify(missionState));
+                // Also save to sessionStorage as redundant backup
+                sessionStorage.setItem('fieldOfficerCurrentMission', JSON.stringify(missionState));
+                this.showAutoSaveIndicator();
+                return true;
+            } catch (e) {
+                console.error('Error saving current mission:', e);
+                if (e.name === 'QuotaExceededError') {
+                    this.showNotification('Storage full! Mission data may not be saved.', 'error');
+                    // Try at least sessionStorage
+                    try {
+                        sessionStorage.setItem('fieldOfficerCurrentMission', JSON.stringify(missionState));
+                    } catch (e2) {
+                        console.error('sessionStorage also full:', e2);
+                    }
+                } else {
+                    this.showNotification('Error saving mission. Please try again.', 'error');
+                }
+                return false;
+            }
         }
     }
 
     restoreCurrentMission() {
-        const saved = localStorage.getItem('fieldOfficerCurrentMission');
+        let saved = localStorage.getItem('fieldOfficerCurrentMission');
+        // Try sessionStorage backup if localStorage fails
+        if (!saved) {
+            saved = sessionStorage.getItem('fieldOfficerCurrentMission');
+            if (saved) {
+                console.log('Restored from sessionStorage backup');
+            }
+        }
+        
         if (saved) {
             try {
                 const state = JSON.parse(saved);
@@ -1125,16 +1180,28 @@ Report Generated: ${this.formatDateTime(new Date())}`;
                     }
                 }
                 
-                this.showNotification('Restored incomplete mission', 'success');
+                const savedAt = state.savedAt ? new Date(state.savedAt).toLocaleString() : 'unknown time';
+                this.showNotification(`Restored mission from ${savedAt}`, 'success');
             } catch (e) {
                 console.error('Error restoring mission:', e);
-                localStorage.removeItem('fieldOfficerCurrentMission');
+                this.showNotification('Error restoring mission data', 'error');
+                // Don't delete backup data in case of parsing error
+                try {
+                    localStorage.removeItem('fieldOfficerCurrentMission');
+                } catch (e2) {
+                    console.error('Error clearing corrupted data:', e2);
+                }
             }
         }
     }
 
     clearCurrentMission() {
-        localStorage.removeItem('fieldOfficerCurrentMission');
+        try {
+            localStorage.removeItem('fieldOfficerCurrentMission');
+            sessionStorage.removeItem('fieldOfficerCurrentMission');
+        } catch (e) {
+            console.error('Error clearing current mission:', e);
+        }
         this.currentMission = null;
         this.isOnSite = false;
         this.currentSiteStartTime = null;
@@ -1184,6 +1251,45 @@ Report Generated: ${this.formatDateTime(new Date())}`;
                 }
             }, 300);
         }, 1500);
+    }
+
+    startAutoSave() {
+        // Auto-save every 30 seconds as a backup
+        if (this.autoSaveInterval) {
+            clearInterval(this.autoSaveInterval);
+        }
+        this.autoSaveInterval = setInterval(() => {
+            if (this.currentMission && this.currentMission.status === 'active') {
+                this.saveCurrentMission();
+                console.log('Auto-save triggered at', new Date().toISOString());
+            }
+        }, 30000); // 30 seconds
+    }
+
+    addBeforeUnloadListener() {
+        // Save data before page closes/refreshes
+        window.addEventListener('beforeunload', (e) => {
+            if (this.currentMission && this.currentMission.status === 'active') {
+                this.saveCurrentMission();
+                console.log('Saved before page unload');
+            }
+        });
+        
+        // Also listen for visibility change (when app goes to background on mobile)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && this.currentMission && this.currentMission.status === 'active') {
+                this.saveCurrentMission();
+                console.log('Saved on visibility change');
+            }
+        });
+        
+        // Listen for page hide event (more reliable on mobile)
+        window.addEventListener('pagehide', (e) => {
+            if (this.currentMission && this.currentMission.status === 'active') {
+                this.saveCurrentMission();
+                console.log('Saved on page hide');
+            }
+        });
     }
 }
 
